@@ -311,6 +311,41 @@
 				<!-- Search box -->
 				<div class="form-group">
 					<input type="text" id="searchInput" class="form-control" placeholder="Search for modules...">
+					<select id="module_type" name="options">
+						<option value="">模组属性：不限</option>
+						<option value="短模组">短模组</option>
+						<option value="短遭遇">短遭遇</option>
+						<option value="中篇模组">中篇模组</option>
+						<option value="长篇模组">长篇模组</option>
+						<option value="短模组（地下城）">短模组（地下城）</option>
+						<option value="短模组（开阔世界）">短模组（开阔世界）</option>
+						<option value="短模组（异界）">短模组（异界）</option>
+						<option value="短模组（建筑）">短模组（建筑）</option>
+						<option value="短模组（小岛）">短模组（小岛）</option>
+						<option value="短遭遇（异界）">短遭遇（异界）</option>
+						<option value="短遭遇（城镇）">短遭遇（城镇）</option>
+						<option value="短遭遇（建筑）">短遭遇（建筑）</option>
+						<option value="中篇模组（开阔世界）">中篇模组（开阔世界）</option>
+						<option value="长篇模组（开阔世界）">长篇模组（开阔世界）</option>
+					</select>
+					<select id="module_tier" name="options">
+						<option value="">冒险阶段：不限</option>
+						<option value="T1">T1</option>
+						<option value="T2">T2</option>
+						<option value="T3">T3</option>
+						<option value="T4">T4</option>
+						<option value="任何">任何</option>
+					</select>
+					<select id="party_time" name="options">
+						<option value="">聚会时间：不限</option>
+						<option value="1">1次</option>
+						<option value="2">2次</option>
+						<option value="3">3次</option>
+						<option value="4">4次</option>
+						<option value="5">5次</option>
+						<option value="6">6次</option>
+					</select>
+					<button id="searchButton">搜索</button>
 				</div>
 				<!-- Table to display data -->
 				<table class="table table-striped" id="moduleTable">
@@ -438,10 +473,13 @@
 
 							// Insert headers into the table
 							const tableHeaders = document.getElementById('tableHeaders');
-							headers.forEach(header => {
-								const th = document.createElement('th');
-								th.textContent = header;
-								tableHeaders.appendChild(th);
+							headers.forEach((header, index) => {
+								if (index != 9) {
+									const th = document.createElement('th');
+									th.textContent = header;
+									tableHeaders.appendChild(th);
+								}
+
 							});
 
 							displayTable();
@@ -463,21 +501,25 @@
 						paginatedData.forEach(row => {
 							const tr = document.createElement('tr');
 							Object.values(row).forEach((cell, index) => {
-								const td = document.createElement('td');
-								if (index === 0) { // Assuming the first column should be a link
-									const link = document.createElement('a');
-									link.href = row[
-										"网址"]; // Assuming the URL is in the first column
-									link.textContent = cell; // Display URL as link text
-									link.target = '_blank'; // Open link in a new tab
-									td.appendChild(link);
-								} else {
-									td.textContent = cell;
+								if (index != 9) {
+									const td = document.createElement('td');
+
+
+									if (index === 0) { // Assuming the first column should be a link
+										const link = document.createElement('a');
+										link.href = row[
+											"网址"]; // Assuming the URL is in the first column
+										link.textContent = cell; // Display URL as link text
+										link.target = '_blank'; // Open link in a new tab
+										td.appendChild(link);
+									} else {
+										td.textContent = cell;
+									}
+
+
+
+									tr.appendChild(td);
 								}
-
-
-
-								tr.appendChild(td);
 
 							});
 							tableBody.appendChild(tr);
@@ -513,6 +555,28 @@
 							return Object.values(row).some(cell =>
 								String(cell).toLowerCase().includes(searchTerm)
 							);
+						});
+						currentPage = 1;
+						displayTable();
+						setupPagination();
+					});
+
+					document.getElementById('searchButton').addEventListener('click', function() {
+						const searchInputs = {
+							module_type: document.getElementById('module_type').value.toLowerCase(),
+							module_tier: document.getElementById('module_tier').value.toLowerCase(),
+							party_time: document.getElementById('party_time').value.toLowerCase()
+						};
+						filteredData = data.filter(row => {
+							return Object.entries(searchInputs).every(([key, inputValue]) => {
+								// 如果输入框为空，则跳过该条件
+								if (!inputValue) return true;
+
+								// 搜索条件是否匹配对象中的任意字段
+								return Object.values(row).some(value =>
+									String(value).toLowerCase().includes(inputValue)
+								);
+							});
 						});
 						currentPage = 1;
 						displayTable();
