@@ -11,3 +11,5 @@ We need to recruit DND enthusiasts who know JavaScript to help maintain the proj
 2024-08-29 增加了可以点击的链接
 
 2024-08-30 初步实现了交叉搜索，但还有很多BUG
+
+2024-10-16 初步修复了一些BUG，但产生了一些新的BUG
