@@ -336,6 +336,29 @@
 						<option value="T4">T4</option>
 						<option value="任何">任何</option>
 					</select>
+					<select id="adventurer_level" name="options">
+						<option value="">冒险者等级：不限</option>
+						<option value="1">1</option>
+						<option value="2">2</option>
+						<option value="3">3</option>
+						<option value="4">4</option>
+						<option value="5">5</option>
+						<option value="6">6</option>
+						<option value="7">7</option>
+						<option value="8">8</option>
+						<option value="9">9</option>
+						<option value="10">10</option>
+						<option value="11">11</option>
+						<option value="12">12</option>
+						<option value="13">13</option>
+						<option value="14">14</option>
+						<option value="15">15</option>
+						<option value="16">16</option>
+						<option value="17">17</option>
+						<option value="18">18</option>
+						<option value="19">19</option>
+						<option value="20">20</option>
+					</select>
 					<select id="party_time" name="options">
 						<option value="">聚会时间：不限</option>
 						<option value="1">1次</option>
@@ -565,19 +588,51 @@
 						const searchInputs = {
 							module_type: document.getElementById('module_type').value.toLowerCase(),
 							module_tier: document.getElementById('module_tier').value.toLowerCase(),
-							party_time: document.getElementById('party_time').value.toLowerCase()
+							party_time: document.getElementById('party_time').value.toLowerCase(),
+							adventurer_level: document.getElementById('adventurer_level').value.toLowerCase()
 						};
 						filteredData = data.filter(row => {
 							return Object.entries(searchInputs).every(([key, inputValue]) => {
 								// 如果输入框为空，则跳过该条件
 								if (!inputValue) return true;
+								if (key === "module_type") {
+									if (row['类型'].includes(inputValue)) {
+										return true;
+									} else {
+										return false;
+									}
+								}
+								if (key === "module_tier") {
+									if (row['游戏阶段'].toLowerCase().includes(inputValue
+									.toLowerCase())) {
+										return true;
+									} else if (row['游戏阶段'].includes("任何")) {
+										return true;
+									} else {
+										return false;
+									}
+								}
+								if (key === "party_time") {
+									if (row['聚会次数'] <= inputValue) {
+										return true;
+									} else {
+										return false;
+									}
+								}
+								//if(key==="adventurer_level")
+								//{
+								//	console.log("-");
+								//	console.log(row['开始等级1']);
+								//	console.log(row['开始等级2']);
+								//	console.log(inputValue);
+								//	if(row['开始等级1']> inputValue){return flase;}
+								//	else if(row['开始等级2']< inputValue){return flase;}
+								//	else{return true;}
+								//}
 
-								// 搜索条件是否匹配对象中的任意字段
-								return Object.values(row).some(value =>
-									String(value).toLowerCase().includes(inputValue)
-								);
 							});
 						});
+						
 						currentPage = 1;
 						displayTable();
 						setupPagination();
